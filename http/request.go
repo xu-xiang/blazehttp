@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"io"
 	"os"
@@ -214,5 +215,14 @@ func (r *Request) ReadFile(file string) error {
 	defer fp.Close()
 
 	_, err = r.ReadFrom(fp)
+	return err
+}
+
+func (r *Request) ReadFileFromFS(fs embed.FS, file string) error {
+	b, err := fs.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	_, err = r.ReadFrom(bytes.NewReader(b))
 	return err
 }
