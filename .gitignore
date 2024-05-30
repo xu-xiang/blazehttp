@@ -25,3 +25,4 @@ dist/
 output*/
 .builds/
 build/
+fyne-cross
