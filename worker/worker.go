@@ -277,8 +277,9 @@ func (w *Worker) processJobResult() {
 				w.result.Error++
 			}
 			if w.resultCh != nil {
-				w.result.Job = job
-				w.resultCh <- w.result
+				r := *w.result
+				r.Job = job
+				w.resultCh <- &r
 			}
 		}
 	}
