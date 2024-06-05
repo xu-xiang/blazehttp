@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/csv"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -145,7 +147,7 @@ func main() {
 	a := app.New()
 	a.Settings().SetTheme(&theme.BlazeHTTPTheme{})
 	w := a.NewWindow("BLAZEHTTP")
-	w.Resize(fyne.Size{Width: 720})
+	w.Resize(fyne.Size{Width: 810})
 
 	outputCh := make(chan string)
 	resultCh := make(chan *worker.Result)
@@ -423,7 +425,38 @@ func MakeTestCaseTab(w fyne.Window) fyne.CanvasObject {
 		refreshTable(selected, fileProperty.Selected, isIntercept.Selected)
 	}
 
-	return container.NewBorder(tableFilterForm, nil, nil, nil, table)
+	exportBtn := widget.NewButton("导出", nil)
+
+	exportBtn.OnTapped = func() {
+		dialog.ShowFileSave(func(writer fyne.URIWriteCloser, err error) {
+			if writer == nil {
+				return
+			}
+			if err != nil {
+				dialog.ShowError(err, w)
+				return
+			}
+			defer writer.Close()
+			b := new(bytes.Buffer)
+			csvWriter := csv.NewWriter(b)
+			if err := csvWriter.WriteAll(tableData); err != nil {
+				dialog.ShowError(err, w)
+				return
+			}
+			if err := csvWriter.Error(); err != nil {
+				dialog.ShowError(err, w)
+				return
+			}
+			n, err := writer.Write(b.Bytes())
+			if err != nil {
+				dialog.ShowError(err, w)
+				return
+			}
+			fmt.Println("Wrote", n, "bytes")
+		}, w)
+	}
+
+	return container.NewBorder(tableFilterForm, nil, nil, exportBtn, table)
 }
 
 func run(target, mHost string, c, statusCode int, resultCh chan *worker.Result, stopCh chan struct{}) error {
