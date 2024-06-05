@@ -1,4 +1,9 @@
-# BlazeHTTP
+<div align="center">
+<img src="https://github.com/chaitin/blazehttp/assets/30664688/746026da-6b2f-4f9c-86f1-1e3cb129ca22" width="120"/>
+</div>
+<h1 align="center">BlazeHTTP</h1>
+<h4 align="center"><strong>简体中文</strong> | <a href="https://github.com/chaitin/blazehttp/blob/master/README_EN.md">
+English</a></h4>
 
 BlazeHTTP 是一款简单易用的 WAF **防护效果测试**工具。
 
