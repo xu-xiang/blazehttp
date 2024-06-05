@@ -15,6 +15,34 @@ BlazeHTTP 是一款简单易用的 WAF **防护效果测试**工具。
 | 准确率  | 准确率是检出率和误报率的综合指标，避免漏报和误报顾此失彼。 |  |
 | 检测耗时  | 用来反应 WAF 性能，耗时越大则性能越差。 |  |
 
+## 样本示例
+
+```bash
+# 正常样本：testcases/00/02/5ebf56a710da27b73a9ad59219f0.white
+GET /rc-virtual-list@3.5.2/lib/hooks/useHeights.js HTTP/1.1
+Host: npm.staticblitz.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: */*
+Origin: https://stackblitz.com
+Sec-Fetch-Site: cross-site
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://stackblitz.com/
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
+
+# 黑样本：testcases/8a/36/0bbc7685860c526e33f3cbd83f9c.black
+GET /vulnerabilities/sqli_blind/?id=1%27+or+%27%27%3D%27&Submit=Submit HTTP/1.1
+Host: 10.10.3.128
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Referer: http://10.10.3.128/vulnerabilities/sqli_blind/?id=1%27+and+%27%27%3D%27&Submit=Submit
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
+Connection: close
+```
+
 ## 安装使用
 
 GitHub CI 预编译的产物已上传 Release，可以[直接下载](https://github.com/chaitin/blazehttp/releases)最新的版本使用。
