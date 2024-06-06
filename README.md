@@ -64,13 +64,22 @@ Connection: close
 
 ## 安装使用
 
+**Docker 容器运行**
+
+```bash
+# 下载镜像
+docker pull chaitin/blazehttp:latest
+# 开始测试 http://127.0.0.1:9444 是 WAF 的地址 (根据实际情况修改)
+docker run --rm --net=host chaitin/blazehttp:latest /app/blazehttp -t <http://127.0.0.1:9444>
+```
+
 GitHub CI 预编译的产物已上传 Release，可以[直接下载](https://github.com/chaitin/blazehttp/releases)最新的版本使用。
 
-**命令行**
+**命令行运行**
 
 ![blazehttp_cmd](https://github.com/chaitin/blazehttp/assets/30664688/7be052e9-2dfb-4f96-a6f2-eb2a0251910e)
 
-**GUI** (MacOS & Windows)
+**GUI 运行** (MacOS & Windows)
 
 > 如果 MacOS 双击打开报错**不受信任**或者**移到垃圾箱**，执行下面命令后再启动即可：
 > ``` bash

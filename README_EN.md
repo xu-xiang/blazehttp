@@ -64,6 +64,15 @@ Connection: close
 
 ## Installation and Usage
 
+** Docker Container**
+
+```bash
+# pull latest image from DockerHub
+docker pull chaitin/blazehttp:latest
+# run test
+docker run --rm --net=host chaitin/blazehttp:latest /app/blazehttp -t <URL>
+```
+
 Precompiled artifacts from GitHub CI have been uploaded to Releases for direct downloads of the latest version [here](https://github.com/chaitin/blazehttp/releases).
 
 **Command Line**
