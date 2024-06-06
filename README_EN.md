@@ -48,6 +48,20 @@ Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7
 Connection: close
 ```
 
+## Testing Effectiveness
+
+### [CloudFlare](https://www.cloudflare.com/) vs [ModSecurity](https://github.com/owasp-modsecurity/ModSecurity) vs [SafeLine](https://waf.chaitin.com/)
+
+| Metric | CloudFlare, Free Version | ModSecurity, PARANOIA Level 1 | ModSecurity,  PARANOIA Level 4 | SafeLine, Free Version, Balance Mode | SafeLine, Free Version, Strict Mode |
+| --- | --- | --- | --- | --- | --- |
+| Total Samples | 33669 | 33669 | 33669 | 33669 | 33669 |
+| Successful | 33350 | 33669 | 33669 | 33669 | 33669 |
+| Errors | 319 | 0 | 0 | 0 | 0 |
+| **Detection Rate (higher is better)** | 10.70% (Total Malicious Samples: 570, Correctly Intercepted: 61, Missed Detections: 509) | 69.74% (Total Malicious Samples: 575, Correctly Intercepted: 401, Missed Detections: 174) | 🏆 **94.61%** (Total Malicious Samples: 575, Correctly Intercepted: 544, Missed Detections: 31) | 71.65% (Total Malicious Samples: 575, Correctly Intercepted: 412, Missed Detections: 163) | 76.17% (Total Malicious Samples: 575, Correctly Intercepted: 438, Missed Detections: 137) |
+| **False Positive Rate (lower is better)** | 0.07% (Total Normal Samples: 32780, Correctly Passed: 32757, False Positives: 23) | 17.58% (Total Normal Samples: 33094, Correctly Passed: 27275, False Positives: 5819) | 52.46% (Total Normal Samples: 33094, Correctly Passed: 15732, False Positives: 17362) | 🏆 **0.07%** (Total Normal Samples: 33094, Correctly Passed: 33071, False Positives: 23) | 0.22% (Total Normal Samples: 33094, Correctly Passed: 33021, False Positives: 73) |
+| **Accuracy (higher is better)** | 98.40% (Correct Interceptions + Correct Passes) / Total Samples | 82.20% (Correct Interceptions + Correct Passes) / Total Samples | 48.34% (Correct Interceptions + Correct Passes) / Total Samples | 🏆 **99.45%** (Correct Interceptions + Correct Passes) / Total Samples | 99.38% (Correct Interceptions + Correct Passes) / Total Samples |
+| Average Time | 288.96 milliseconds | 31.15 milliseconds | 28.89 milliseconds | 70.05 milliseconds | 64.34 milliseconds |
+
 ## Installation and Usage
 
 Precompiled artifacts from GitHub CI have been uploaded to Releases for direct downloads of the latest version [here](https://github.com/chaitin/blazehttp/releases).
