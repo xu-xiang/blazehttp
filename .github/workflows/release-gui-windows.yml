@@ -1,4 +1,4 @@
-name: release blasehttp windows gui
+name: release blazehttp windows gui
 
 permissions:
   contents: write

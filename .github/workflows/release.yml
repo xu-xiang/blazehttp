@@ -1,4 +1,4 @@
-name: release blasehttp cli
+name: release blazehttp cli
 
 permissions:
   contents: write
