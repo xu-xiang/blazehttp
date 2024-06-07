@@ -158,9 +158,10 @@ func main() {
 		m := lo.CountValuesBy(rawTestCaseData, func(item []string) string {
 			if item[1] == "正常" {
 				return "正常"
-			} else {
+			} else if item[1] == "恶意" {
 				return "恶意"
 			}
+			return "unknown"
 		})
 
 		_ = r.Total.Set(fmt.Sprintf("总样本: %d", len(allTestData)))

@@ -181,106 +181,96 @@ func (w *Worker) Run() {
 
 func (w *Worker) runWorker() {
 	for job := range w.jobs {
-		select {
-		case <-w.ctx.Done():
-			return
-		default:
-			func() {
-				defer func() {
-					w.jobResult <- job
-				}()
-				filePath := job.FilePath
-				req := new(blazehttp.Request)
-				if w.useEmbedFS {
-					if err := req.ReadFileFromFS(testcases.EmbedTestCasesFS, filePath); err != nil {
-						job.Result.Err = fmt.Sprintf("read request file: %s from embed fs error: %s\n", filePath, err)
-						return
-					}
-				} else {
-					if err := req.ReadFile(filePath); err != nil {
-						job.Result.Err = fmt.Sprintf("read request file: %s error: %s\n", filePath, err)
-						return
-					}
-				}
-
-				if w.reqHost != "" {
-					req.SetHost(w.reqHost)
-				} else {
-					req.SetHost(w.addr)
-				}
-
-				if w.reqPerSession {
-					// one http request one connection
-					req.SetHeader("Connection", "close")
-				}
-
-				req.CalculateContentLength()
-
-				start := time.Now()
-				conn := blazehttp.Connect(w.addr, w.isHttps, w.timeout)
-				if conn == nil {
-					job.Result.Err = fmt.Sprintf("connect to %s failed!\n", w.addr)
-					return
-				}
-				nWrite, err := req.WriteTo(*conn)
-				if err != nil {
-					job.Result.Err = fmt.Sprintf("send request poc: %s length: %d error: %s", filePath, nWrite, err)
-					return
-				}
-
-				rsp := new(blazehttp.Response)
-				if err = rsp.ReadConn(*conn); err != nil {
-					job.Result.Err = fmt.Sprintf("read poc file: %s response, error: %s", filePath, err)
-					return
-				}
-				elap := time.Since(start).Nanoseconds()
-				(*conn).Close()
-				job.Result.Success = true
-				if strings.HasSuffix(job.FilePath, "white") {
-					job.Result.IsWhite = true // white case
-				}
-
-				code := rsp.GetStatusCode()
-				job.Result.StatusCode = code
-				if code != w.blockStatusCode {
-					job.Result.IsPass = true
-				}
-				job.Result.TimeCost = elap
+		func() {
+			defer func() {
+				w.jobResult <- job
 			}()
-		}
+			filePath := job.FilePath
+			req := new(blazehttp.Request)
+			if w.useEmbedFS {
+				if err := req.ReadFileFromFS(testcases.EmbedTestCasesFS, filePath); err != nil {
+					job.Result.Err = fmt.Sprintf("read request file: %s from embed fs error: %s\n", filePath, err)
+					return
+				}
+			} else {
+				if err := req.ReadFile(filePath); err != nil {
+					job.Result.Err = fmt.Sprintf("read request file: %s error: %s\n", filePath, err)
+					return
+				}
+			}
+
+			if w.reqHost != "" {
+				req.SetHost(w.reqHost)
+			} else {
+				req.SetHost(w.addr)
+			}
+
+			if w.reqPerSession {
+				// one http request one connection
+				req.SetHeader("Connection", "close")
+			}
+
+			req.CalculateContentLength()
+
+			start := time.Now()
+			conn := blazehttp.Connect(w.addr, w.isHttps, w.timeout)
+			if conn == nil {
+				job.Result.Err = fmt.Sprintf("connect to %s failed!\n", w.addr)
+				return
+			}
+			nWrite, err := req.WriteTo(*conn)
+			if err != nil {
+				job.Result.Err = fmt.Sprintf("send request poc: %s length: %d error: %s", filePath, nWrite, err)
+				return
+			}
+
+			rsp := new(blazehttp.Response)
+			if err = rsp.ReadConn(*conn); err != nil {
+				job.Result.Err = fmt.Sprintf("read poc file: %s response, error: %s", filePath, err)
+				return
+			}
+			elap := time.Since(start).Nanoseconds()
+			(*conn).Close()
+			job.Result.Success = true
+			if strings.HasSuffix(job.FilePath, "white") {
+				job.Result.IsWhite = true // white case
+			}
+
+			code := rsp.GetStatusCode()
+			job.Result.StatusCode = code
+			if code != w.blockStatusCode {
+				job.Result.IsPass = true
+			}
+			job.Result.TimeCost = elap
+		}()
 	}
 }
 
 func (w *Worker) processJobResult() {
 	for job := range w.jobResult {
-		select {
-		case <-w.ctx.Done():
-			return
-		default:
-			if job.Result.Success {
-				w.result.Success++
-				w.result.SuccessTimeCost += job.Result.TimeCost
-				if job.Result.IsWhite {
-					if job.Result.IsPass {
-						w.result.TN++
-					} else {
-						w.result.FP++
-					}
+		if job.Result.Success {
+			w.result.Success++
+			w.result.SuccessTimeCost += job.Result.TimeCost
+			if job.Result.IsWhite {
+				if job.Result.IsPass {
+					w.result.TN++
 				} else {
-					if job.Result.IsPass {
-						w.result.FN++
-					} else {
-						w.result.TP++
-					}
+					w.result.FP++
 				}
 			} else {
-				w.result.Error++
+				if job.Result.IsPass {
+					w.result.FN++
+				} else {
+					w.result.TP++
+				}
 			}
-			if w.resultCh != nil {
-				r := *w.result
-				r.Job = job
-				w.resultCh <- &r
-			}
+		} else {
+			w.result.Error++
+		}
+		if w.resultCh != nil {
+			r := *w.result
+			r.Job = job
+			w.resultCh <- &r
 		}
 	}
 }
